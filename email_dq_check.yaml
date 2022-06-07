@@ -1,0 +1,42 @@
+metadata_registry_defaults:
+ dataplex:
+   projects: project-id # Replace "project-id" with your project ID.
+   locations: region-id # Replace "region-id" with the region ID of the Dataplex lake in which the table exists. For example, us-central1.
+   lakes: datalake-name # Replace "datalake-name" with your datalake.
+   zones: zone-name # Replace "zone-name" with the name of the zone
+
+row_filters:
+ NONE:
+   filter_sql_expr: |-
+      True
+
+rule_dimensions:
+  - consistency
+  - correctness
+  - duplication
+  - completeness
+  - conformance
+  - integrity
+
+rules:
+ REGEX_VALID_EMAIL:
+   rule_type: REGEX
+   dimension: conformance
+   params:
+     pattern: |-
+       ^[^@]+[@]{1}[^@]+$
+
+ NOT_NULL_SIMPLE:
+   rule_type: NOT_NULL
+   dimension: completeness
+
+rule_bindings:
+ EMAIL_RULE:
+    entity_uri: dataplex://projects/<project-id>/locations/<region>/lakes/<datalake-name>/zones/<zone-name>/entities/<table-name>
+    column_id: EMAIL
+    row_filter_id: NONE
+    rule_ids:
+      - NOT_NULL_SIMPLE
+      - REGEX_VALID_EMAIL
+    metadata:
+      team: team-2
